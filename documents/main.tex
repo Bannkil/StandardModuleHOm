@@ -1,0 +1,34 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage{norme}
+
+% Dossier des images : \includegraphics{mecanique/gabarit.pdf}
+\graphicspath{{images/}}
+
+% --- Informations du document -----------------------------------
+\NormeTitre{Normes techniques}
+\NormeSousTitre{Construction de modules HOm}
+\NormeAuteur{Damien De Pascale}
+\NormeVersion{0.1}
+% La date du jour est utilisée par défaut. Pour la fixer :
+% \NormeDate{19.07.2026}
+
+% Pour ne compiler que certains chapitres pendant la rédaction :
+% \includeonly{chapitres/01-dessins-schemas}
+
+\begin{document}
+
+\NormePageTitre
+\tableofcontents
+% \listoffigures   % liste des figures (optionnelle)
+
+% Un fichier par chapitre ; chaque fichier commence par \Chapitre{...}
+\include{chapitres/01-introduction}
+\include{chapitres/02-structure}
+\include{chapitres/03-raccordement}
+\include{chapitres/04-cablage}
+\include{chapitres/05-voie}
+\include{chapitres/06-traction}
+\include{chapitres/07-decors}
+\include{chapitres/08-etiquettage}
+
+\end{document}

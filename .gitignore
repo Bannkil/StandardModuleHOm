@@ -1,0 +1,23 @@
+# Fichiers temporaires Mircosoft
+*~$*
+
+# Fichiers temporaires de compilation LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.nav
+*.snm
+*.vrb
+
+# Le PDF généré
+documents/*.pdf

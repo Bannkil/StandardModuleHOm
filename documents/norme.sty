@@ -1,0 +1,144 @@
+% ---------------------------------------------------------------
+% norme.sty : mise en page des normes techniques
+%
+% Structure : page de titre, table des matières, puis des chapitres.
+% Un chapitre = un titre numéroté en grand suivi de sections
+% numérotées 1, 2, 3... (la numérotation repart à 1 à chaque chapitre).
+% Pied de page : auteur | page / total | date
+% À utiliser avec \documentclass{report}.
+% ---------------------------------------------------------------
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{norme}[2026/11/05 Mise en page des normes]
+
+% --- Langue, codage et police -----------------------------------
+\RequirePackage[T1]{fontenc}
+\IfFileExists{french.ldf}
+  {\RequirePackage[french]{babel}}
+  {\RequirePackage[provide=*]{babel}\babelprovide[main,import]{french}}
+\RequirePackage{helvet}                  % Helvetica (sans-serif)
+\renewcommand{\familydefault}{\sfdefault}
+
+% --- Page -------------------------------------------------------
+\RequirePackage[a4paper,left=2cm,right=2cm,top=2cm,bottom=2.5cm]{geometry}
+\RequirePackage{microtype}
+
+% --- Paquets utiles ---------------------------------------------
+\RequirePackage{graphicx}
+\RequirePackage{xcolor}
+\RequirePackage{booktabs}
+\RequirePackage{enumitem}
+\RequirePackage[font=small,labelfont=bf]{caption}
+\RequirePackage{chngcntr}
+\RequirePackage[hidelinks]{hyperref}
+
+% --- Paragraphes : sans retrait, espacement léger, texte à gauche
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.7em}
+\setlist{nosep,leftmargin=1.5em}
+\setlist[itemize,1]{label=--}
+\RequirePackage{ragged2e}
+\AtBeginDocument{\RaggedRight}
+\setlength{\emergencystretch}{3em}       % évite les débordements en marge
+
+% --- Numérotation -----------------------------------------------
+% Les chapitres sont numérotés ; les sections repartent à 1 à chaque chapitre.
+\renewcommand{\thechapter}{\arabic{chapter}}
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+% Figures et tableaux : numérotation continue dans tout le document.
+\counterwithout{figure}{chapter}
+\counterwithout{table}{chapter}
+
+% --- Titres -----------------------------------------------------
+\RequirePackage{titlesec}
+\titleformat{\chapter}[block]
+  {\normalfont\sffamily\fontsize{24}{28}\selectfont}{\thechapter.\quad}{0pt}{}
+\titlespacing*{\chapter}{0pt}{0pt}{0.8em}
+\titleformat{\section}
+  {\normalfont\sffamily\fontsize{16}{20}\selectfont}{\thesection}{0.6em}{}
+\titleformat{\subsection}
+  {\normalfont\sffamily\fontsize{13}{16}\selectfont}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}
+  {\normalfont\sffamily\fontsize{11}{14}\selectfont}{\thesubsubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.8em}{0.4em}
+\titlespacing*{\subsection}{0pt}{1.2em}{0.3em}
+\titlespacing*{\subsubsection}{0pt}{1em}{0.2em}
+
+% Début d'un chapitre : nouvelle page, titre en grand, entrée dans la
+% table des matières, sections qui repartent à 1.
+\newcommand{\Chapitre}[1]{%
+  \clearpage
+  \stepcounter{chapter}%
+  \setcounter{section}{0}%
+  \phantomsection
+  \addcontentsline{toc}{chapter}{\texorpdfstring{\thechapter\quad #1}{\thechapter. #1}}%
+  \chapter*{\texorpdfstring{\thechapter\quad #1}{\thechapter. #1}}}
+
+% --- Informations du document -----------------------------------
+\newcommand{\norme@titre}{}
+\newcommand{\norme@soustitre}{}
+\newcommand{\norme@auteur}{}
+\newcommand{\norme@version}{}
+\def\norme@twodigits#1{\ifnum#1<10 0\fi\number#1}
+\newcommand{\norme@date}{%
+  \norme@twodigits\day.\norme@twodigits\month.\number\year}
+
+\newcommand{\NormeTitre}[1]{\renewcommand{\norme@titre}{#1}}
+\newcommand{\NormeSousTitre}[1]{\renewcommand{\norme@soustitre}{#1}}
+\newcommand{\NormeAuteur}[1]{\renewcommand{\norme@auteur}{#1}}
+\newcommand{\NormeVersion}[1]{\renewcommand{\norme@version}{#1}}
+\newcommand{\NormeDate}[1]{\renewcommand{\norme@date}{#1}}
+
+% --- Pied de page : auteur | page / total | date ----------------
+\RequirePackage{fancyhdr}
+\RequirePackage{lastpage}
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+  \fancyfoot[L]{\footnotesize\color{gray}\norme@auteur}%
+  \fancyfoot[C]{\footnotesize\bfseries\color{gray}\thepage\,/\,\pageref{LastPage}}%
+  \fancyfoot[R]{\footnotesize\color{gray}\norme@date}%
+}
+\pagestyle{plain}
+
+% --- Page de titre ----------------------------------------------
+% (sans l'environnement titlepage, qui remettrait le compteur de pages à 1 :
+%  la page de titre compte comme page 1, sans numéro affiché)
+\newcommand{\NormePageTitre}{%
+  \thispagestyle{empty}%
+  \vspace*{5.5cm}%
+  {\fontsize{36}{42}\selectfont\norme@titre\par}%
+  \ifx\norme@soustitre\@empty\else
+    \vspace{0.8em}%
+    {\fontsize{18}{22}\selectfont\color{gray}\norme@soustitre\par}%
+  \fi
+  \vfill
+  {\color{gray}%
+    \norme@auteur\par
+    \ifx\norme@version\@empty\else Version \norme@version\par\fi
+    \norme@date\par}%
+  \clearpage}
+
+% --- Table des matières -----------------------------------------
+\setcounter{tocdepth}{2}
+\RequirePackage{tocloft}
+\renewcommand{\contentsname}{Table des matières}
+\renewcommand{\cftchapfont}{\sffamily\bfseries}
+\renewcommand{\cftchappagefont}{\sffamily\bfseries}
+\renewcommand{\cftsecfont}{\sffamily}
+\renewcommand{\cftsecpagefont}{\sffamily}
+\renewcommand{\cftsubsecfont}{\sffamily}
+\renewcommand{\cftsubsecpagefont}{\sffamily}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\setlength{\cftbeforechapskip}{1.2em}
+\setlength{\cftbeforesecskip}{0.3em}
+\setlength{\cftbeforesubsecskip}{0.1em}
+\setlength{\cftchapindent}{0pt}
+\setlength{\cftsecindent}{0.5em}
+\setlength{\cftsecnumwidth}{1.8em}
+\setlength{\cftsubsecindent}{2.3em}
+\setlength{\cftsubsecnumwidth}{2.4em}
+
+\endinput
